@@ -44,3 +44,19 @@ file:
   upload:
     url: ${file.url}
     path: ${file.path}
+
+# OPEN DOC API 설정
+springdoc:
+  version: '1.0.0'
+  api-docs:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    doc-expansion: none
+  paths-to-match:
+    - /api/v1/**
