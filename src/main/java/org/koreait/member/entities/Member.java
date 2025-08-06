@@ -13,12 +13,11 @@ import java.time.LocalDateTime;
 @Table(indexes = {
         @Index(name="idx_member_created_at", columnList = "createdAt DESC"),
         @Index(name="idx_member_name", columnList = "name"),
-        @Index(name="idx_member_mobile", columnList = "mobile"),
-        @Index(name="idx_member_social", columnList = "socialType,socialToken")
+        @Index(name="idx_member_mobile", columnList = "mobile")
 })
 public class Member extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @Column(length=75, unique = true, nullable = false)
