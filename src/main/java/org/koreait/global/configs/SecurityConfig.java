@@ -1,5 +1,6 @@
 package org.koreait.global.configs;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.koreait.member.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(c -> c.disable())
-                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(c -> {
+                    c.authenticationEntryPoint((req, res, e) -> {
+                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    });
+                    c.accessDeniedHandler((req, res, e) -> {
+                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    });
+                });
 
         return http.build();
     }
