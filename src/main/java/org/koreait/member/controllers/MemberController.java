@@ -7,9 +7,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.koreait.global.exceptions.BadRequestException;
 import org.koreait.global.libs.Utils;
+import org.koreait.member.jwt.TokenService;
 import org.koreait.member.services.JoinService;
 import org.koreait.member.validators.JoinValidator;
+import org.koreait.member.validators.TokenValidator;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final JoinValidator joinValidator;
     private final JoinService joinService;
+    private final TokenValidator tokenValidator;
+    private final TokenService tokenService;
     private final Utils utils;
 
     @Operation(summary = "회원가입처리", method = "POST")
@@ -43,7 +48,26 @@ public class MemberController {
      * @return
      */
     @PostMapping("/token")
-    public String token() {
+    public String token(@Valid @RequestBody RequestToken form, Errors errors) {
 
+        tokenValidator.validate(form, errors);
+
+        if (errors.hasErrors()) {
+            throw new BadRequestException(utils.getErrorMessages(errors));
+        }
+
+        return tokenService.create(form.getEmail());
+    }
+
+    @PreAuthorize("isAuthenticated()") // 로그인시에만 접근 가능
+    @GetMapping("/test1")
+    public void test1() {
+        System.out.println("로그인시 접근 가능 - test1()");
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping("/test2")
+    public void test2() {
+        System.out.println("관리자만 접근 가능 - test2()");
     }
 }

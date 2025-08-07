@@ -42,4 +42,18 @@ public class MemberControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
+    
+    @Test
+    @DisplayName("이메일, 비밀번호로 토큰 발급 테스트")
+    void tokenCreationTest() throws Exception {
+        RequestToken form = new RequestToken();
+        form.setEmail("user01@test.org");
+        form.setPassword("_aA123456");
+        String body = om.writeValueAsString(form);
+
+        mockMvc.perform(post("/api/v1/member/token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andDo(print());
+    }
 }
