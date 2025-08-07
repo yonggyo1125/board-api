@@ -62,7 +62,7 @@ springdoc:
     - /api/v1/**
 
   # JWT 설정
-  member:
-    jwt:
-      secret: ${jwt.secret}
-      validTime: ${jwt.validTime}
+member:
+  jwt:
+    secret: ${jwt.secret}
+    validTime: ${jwt.validTime}
