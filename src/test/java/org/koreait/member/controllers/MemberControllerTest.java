@@ -3,10 +3,12 @@ package org.koreait.member.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.koreait.member.services.JoinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,12 +17,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles({"default", "test"})
 public class MemberControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper om;
+
+    @Autowired
+    private JoinService joinService;
 
     @Test
     @DisplayName("회원가입 컨트롤러 테스트")
@@ -46,10 +52,20 @@ public class MemberControllerTest {
     @Test
     @DisplayName("이메일, 비밀번호로 토큰 발급 테스트")
     void tokenCreationTest() throws Exception {
-        RequestToken form = new RequestToken();
+
+        RequestJoin form = new RequestJoin();
         form.setEmail("user01@test.org");
         form.setPassword("_aA123456");
-        String body = om.writeValueAsString(form);
+        form.setConfirmPassword(form.getPassword());
+        form.setMobile("01010001000");
+        form.setName("사용자01");
+        form.setTermsAgree(true);
+        joinService.process(form);
+
+        RequestToken form2 = new RequestToken();
+        form2.setEmail("user01@test.org");
+        form2.setPassword("_aA123456");
+        String body = om.writeValueAsString(form2);
 
         mockMvc.perform(post("/api/v1/member/token")
                 .contentType(MediaType.APPLICATION_JSON)
