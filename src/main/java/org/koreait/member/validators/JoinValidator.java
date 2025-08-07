@@ -55,5 +55,11 @@ public class JoinValidator implements Validator, PasswordValidator, MobileValida
         if (!password.equals(confirmPassword)) {
             errors.rejectValue("confirmPassword", "Mismatch");
         }
+
+        // 4. 휴대전화번호 형식 검증
+        String mobile = form.getMobile();
+        if (!checkMobile(mobile)) {
+            errors.rejectValue("mobile", "Mobile");
+        }
     }
 }
