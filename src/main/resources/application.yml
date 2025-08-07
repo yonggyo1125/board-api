@@ -55,7 +55,7 @@ springdoc:
   swagger-ui:
     operations-sorter: alpha
     tags-sorter: alpha
-    path: /swagger-ui.html
+    path: /api-docs.html
     disable-swagger-default-url: true
     doc-expansion: none
   paths-to-match:
