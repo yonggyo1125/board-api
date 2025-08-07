@@ -6,6 +6,7 @@ import org.koreait.global.libs.Utils;
 import org.koreait.global.rests.JSONError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -33,6 +34,9 @@ public class CommonControllerAdvice {
                     message = utils.getMessage((String)message);
                 }
             }
+        } else if (e instanceof AuthorizationDeniedException) {
+            status = HttpStatus.UNAUTHORIZED;
+            message = utils.getMessage("UnAuthorized");
         }
 
         e.printStackTrace();
