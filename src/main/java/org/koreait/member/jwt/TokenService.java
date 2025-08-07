@@ -4,6 +4,8 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.koreait.global.exceptions.UnAuthorizedException;
 import org.koreait.global.libs.Utils;
 import org.koreait.member.MemberInfo;
@@ -96,6 +98,27 @@ public class TokenService {
         SecurityContextHolder.getContext().setAuthentication(authentication); // 인증 처리(로그인 처리)
 
         return authentication;
+    }
+
+    /**
+     * 요청헤더
+     *  Authorization: Bearer JWT 토큰 ....
+     * @param request
+     * @return
+     */
+    public Authentication authenticate(ServletRequest request) {
+        HttpServletRequest req = (HttpServletRequest) request;
+        String token = req.getHeader("Authorization");
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+
+        token = token.substring(7);
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+
+        return authenticate(token);
     }
 
     /**
