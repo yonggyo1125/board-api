@@ -37,4 +37,13 @@ public class MemberController {
         joinService.process(form);
     }
 
+    /**
+     * 회원 계정(이메일, 비밀번호)으로 JWT 토큰 발급
+     *
+     * @return
+     */
+    @PostMapping("/token")
+    public String token() {
+
+    }
 }
