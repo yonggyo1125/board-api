@@ -1,5 +1,6 @@
 package org.koreait.member.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.koreait.global.entities.BaseEntity;
@@ -23,6 +24,7 @@ public class Member extends BaseEntity implements Serializable {
     @Column(length=75, unique = true, nullable = false)
     private String email;
 
+    @JsonIgnore
     @Column(length=65)
     private String password;
 
