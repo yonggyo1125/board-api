@@ -99,6 +99,9 @@ public class FileInfoService {
 
             item.setThumbBaseUrl(utils.getUrl("/file/thumb?seq=" + item.getSeq()));
         }
+
+        // 파일 다운로드 URL
+        item.setFileDownloadUrl(utils.getUrl("/file/download/" + item.getSeq()));
     }
 
     public String folder(FileInfo item) {
