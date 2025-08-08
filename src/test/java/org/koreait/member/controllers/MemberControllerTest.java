@@ -3,7 +3,11 @@ package org.koreait.member.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.koreait.member.constants.Authority;
+import org.koreait.member.entities.Member;
+import org.koreait.member.libs.MemberUtil;
 import org.koreait.member.services.JoinService;
+import org.koreait.member.test.libs.MockMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StringUtils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +34,9 @@ public class MemberControllerTest {
 
     @Autowired
     private JoinService joinService;
+
+    @Autowired
+    private MemberUtil memberUtil;
 
     @Test
     @DisplayName("회원가입 컨트롤러 테스트")
@@ -86,5 +94,12 @@ public class MemberControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    @MockMember(authority = Authority.ADMIN)
+    void mockMemberTest() {
+        Member member = memberUtil.getMember();
+        System.out.printf("member:%s, isLogin:%s, isAdmin:%s%n", member, memberUtil.isLogin(), memberUtil.isAdmin());
     }
 }
