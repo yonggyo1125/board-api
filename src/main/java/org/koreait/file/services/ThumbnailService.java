@@ -3,7 +3,7 @@ package org.koreait.file.services;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
-import org.koreait.file.constrollers.RequestThumb;
+import org.koreait.file.controllers.RequestThumb;
 import org.koreait.file.entities.FileInfo;
 import org.koreait.global.configs.FileProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -1,4 +1,4 @@
-package org.koreait.file.constrollers;
+package org.koreait.file.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

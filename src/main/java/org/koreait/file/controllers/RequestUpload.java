@@ -1,4 +1,4 @@
-package org.koreait.file.constrollers;
+package org.koreait.file.controllers;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

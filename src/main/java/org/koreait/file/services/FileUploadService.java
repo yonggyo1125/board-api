@@ -2,7 +2,7 @@ package org.koreait.file.services;
 
 import lombok.RequiredArgsConstructor;
 import org.koreait.file.constants.FileStatus;
-import org.koreait.file.constrollers.RequestUpload;
+import org.koreait.file.controllers.RequestUpload;
 import org.koreait.file.entities.FileInfo;
 import org.koreait.file.exceptions.FileNotFoundException;
 import org.koreait.file.repositories.FileInfoRepository;
