@@ -7,11 +7,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.koreait.global.exceptions.BadRequestException;
 import org.koreait.global.libs.Utils;
+import org.koreait.member.entities.Member;
 import org.koreait.member.jwt.TokenService;
+import org.koreait.member.libs.MemberUtil;
 import org.koreait.member.services.JoinService;
 import org.koreait.member.validators.JoinValidator;
 import org.koreait.member.validators.TokenValidator;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +27,7 @@ public class MemberController {
     private final JoinService joinService;
     private final TokenValidator tokenValidator;
     private final TokenService tokenService;
+    private final MemberUtil memberUtil;
     private final Utils utils;
 
     @Operation(summary = "회원가입처리", method = "POST")
@@ -56,5 +60,19 @@ public class MemberController {
         }
 
         return tokenService.create(form.getEmail());
+    }
+
+
+    /**
+     * 로그인한 회원 정보 출력
+     * 
+     * @return
+     */
+    @Operation(summary = "로그인 상태인 회원 정보를 조회", method = "GET")
+    @ApiResponse(responseCode = "200")
+    @GetMapping // GET /api/v1/member
+    @PreAuthorize("isAuthenticated()")
+    public Member myInfo() {
+        return memberUtil.getMember();
     }
 }

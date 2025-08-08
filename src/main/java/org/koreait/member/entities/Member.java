@@ -1,5 +1,6 @@
 package org.koreait.member.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -43,5 +44,10 @@ public class Member extends BaseEntity implements Serializable {
 
     private LocalDateTime expired; // 계정 만료 일자, null이면 만료 X
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime credentialChangedAt; // 비밀번호 변경 일시
+
+    public boolean isAdmin() {
+        return authority != null && authority == Authority.ADMIN;
+    }
 }
