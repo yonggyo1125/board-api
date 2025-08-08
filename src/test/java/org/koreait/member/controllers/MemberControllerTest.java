@@ -76,7 +76,7 @@ public class MemberControllerTest {
                 .getResponse().getContentAsString(); // 응답 body 데이터를 반환
 
         // 회원전용, 관리자 전용 접근 테스트
-        mockMvc.perform(get("/api/v1/member/test2")
+        mockMvc.perform(get("/api/v1/member/test1")
                 .header("Authorization", "Bearer " + token))
                 .andDo(print());
 
