@@ -17,12 +17,12 @@ public class BoardDeleteService {
     private final BoardDataRepository repository;
     private final FileDeleteService deleteService;
 
-    public void process(Long seq) {
+    public BoardData process(Long seq) {
         BoardData item = infoService.get(seq);
         if (item.getCommentCount() > 0) { // 댓글이 남아 있는 경우 소프트 삭제
             item.setDeletedAt(LocalDateTime.now());
             repository.saveAndFlush(item);
-            return;
+            return item;
         }
 
         // 댓글이 남아있지 않은 경우는 DB에서 삭제 처리
@@ -31,5 +31,7 @@ public class BoardDeleteService {
         deleteService.process(gid);
 
         repository.flush();
+
+        return item;
     }
 }
