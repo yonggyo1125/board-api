@@ -1,10 +1,13 @@
 package org.koreait.crawler.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import lombok.Data;
 import org.koreait.global.entities.BaseEntity;
+
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -23,4 +26,7 @@ public class CrawledData extends BaseEntity {
 
 
     private boolean html;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
 }
