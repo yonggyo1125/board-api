@@ -61,8 +61,13 @@ springdoc:
   paths-to-match:
     - /api/v1/**
 
-  # JWT 설정
+# JWT 설정
 member:
   jwt:
     secret: ${jwt.secret}
     validTime: ${jwt.validTime}
+
+
+# 외부 API 서버 주소
+api:
+  server.url: ${api.url}
