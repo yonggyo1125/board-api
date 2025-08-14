@@ -7,11 +7,11 @@ import org.koreait.crawler.controllers.RequestCrawling;
 import org.koreait.crawler.entities.CrawledData;
 import org.koreait.crawler.repositories.CrawledDataRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
-@Lazy
 @Service
 @RequiredArgsConstructor
 public class CrawlingService {
@@ -80,5 +80,11 @@ public class CrawlingService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 6L)
+    public void scheduledJob() {
+        // 주기적으로 데이터를 수입하는 로직
+
     }
 }

@@ -1,6 +1,7 @@
 package org.koreait.crawler.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
@@ -15,6 +16,7 @@ public class CrawledData extends BaseEntity {
     @Id
     private Integer hash;
 
+    @Column(length = 500)
     private String link;
     private String title;
 
