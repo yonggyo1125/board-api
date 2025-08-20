@@ -69,7 +69,7 @@ public class BoardConfigInfoService {
      * @param search
      * @return
      */
-    public ListData<Board> getList(CommonSearch search) {
+    public ListData<Board> getList(CommonSearch search, boolean isAll) {
         int page = Math.max(search.getPage(), 1);
         int limit = search.getLimit();
         limit = limit < 1 ? 20 : limit;
@@ -79,6 +79,10 @@ public class BoardConfigInfoService {
 
         BooleanBuilder andBuilder = new BooleanBuilder();
         QBoard board = QBoard.board;
+
+        if (!isAll) { // 사용 가능 게시판만 보여주기
+            andBuilder.and(board.active.eq(true));
+        }
 
         // 키워드 검색 처리 S
         sopt = StringUtils.hasText(sopt) ? sopt.toUpperCase() : "ALL";
@@ -107,6 +111,10 @@ public class BoardConfigInfoService {
         Pagination pagination = new Pagination(page, total, 10, limit, request);
 
         return new ListData<>(items, pagination);
+    }
+
+    public ListData<Board> getList(CommonSearch search) {
+        return getList(search, false);
     }
 
     /**

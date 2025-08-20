@@ -67,7 +67,7 @@ public class MemberController {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
-        return tokenService.create(form.getEmail());
+        return form instanceof RequestSocialToken ? tokenService.create((RequestSocialToken)form) : tokenService.create(((RequestLoginToken)form).getEmail());
     }
 
 

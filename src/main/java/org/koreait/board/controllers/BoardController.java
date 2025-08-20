@@ -15,15 +15,19 @@ import org.koreait.board.entities.BoardData;
 import org.koreait.board.entities.Comment;
 import org.koreait.board.services.*;
 import org.koreait.board.services.configs.BoardConfigInfoService;
+import org.koreait.board.services.configs.BoardConfigUpdateService;
+import org.koreait.board.validators.BoardConfigValidator;
 import org.koreait.board.validators.BoardValidator;
 import org.koreait.board.validators.CommentValidator;
 import org.koreait.global.exceptions.BadRequestException;
 import org.koreait.global.libs.Utils;
+import org.koreait.global.search.CommonSearch;
 import org.koreait.global.search.ListData;
 import org.koreait.member.libs.MemberUtil;
 import org.koreait.member.services.MemberSessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -47,11 +51,80 @@ public class BoardController {
     private final BoardUpdateService updateService;
     private final BoardDeleteService deleteService;
     private final BoardValidator boardValidator;
+    private final BoardConfigValidator boardConfigValidator;
+    private final BoardConfigUpdateService configUpdateService;
     private final MemberUtil memberUtil;
     private final HttpServletRequest request;
     private final MemberSessionService session;
     private final PasswordEncoder encoder;
     private final Utils utils;
+
+    @Operation(summary = "게시판별 설정 조회", method = "GET", description = "게시판별(bid - 게시판 아이디) 설정조회")
+    @Parameter(name="bid", required = true, in = ParameterIn.PATH, description = "게시판 아이디")
+    @GetMapping("/config/{bid}")
+    public Board getConfig(@PathVariable("bid") String bid) {
+        return configInfoService.get(bid);
+    }
+    
+    @Operation(summary = "게시판 설정 목록(소비자 페이지에서 사용)", method = "GET", description = "미사용 중인 게시판은 노출이 되지 않는다.")
+    @GetMapping("/configs")
+    public List<Board> getConfigs() {
+        CommonSearch search = new CommonSearch();
+        search.setPage(1);
+        search.setLimit(100000);
+
+        ListData<Board> data = configInfoService.getList(search, false);
+        return data.getItems();
+    }
+    
+    @Operation(summary = "게시판 설정 목록(관리자 페이지에서 사용)", method="GET", description = "관리자 권한이 있을때만 접근 가능, 모든 게시판 설정이 조회가 된다. 페이지네이션 데이터도 함께 전송")
+    @GetMapping("/configs/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ListData<Board> getConfigsAll(@ModelAttribute CommonSearch search) {
+        return configInfoService.getList(search, true);
+    }
+
+    @Operation(summary = "게시판 설정 등록 및 수정", method = "POST,PATCH", description = "POST로 요청을 보내면 게시판 설정 등록, PATCH로 요청을 보내면 게시판 설정 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "게시판 설정 등록 완료"),
+            @ApiResponse(responseCode = "200", description = "게시판 설정 수정 완료")
+    })
+    @Parameters({
+            @Parameter(name="bid", required = true, description = "게시판 아이디"),
+            @Parameter(name="name", required = true, description = "게시판 이름"),
+            @Parameter(name="rowsPerPage", description = "한 페이지당 레코드 갯수, 기본값 20"),
+            @Parameter(name="pageCount", description = "노출될 페이지 갯수, 기본값 10"),
+            @Parameter(name="skin", description = "스킨, 기본값은 default"),
+            @Parameter(name="category", description = "게시판 분류, 여러 분류가 있는 경우는 줄개행 문자로 여러개 입력"),
+            @Parameter(name="active", description = "게시판 사용 여부, true 또는 false"),
+            @Parameter(name="editor", description = "에디터 사용 여부, true 또는 false"),
+            @Parameter(name="imageUpload", description = "에디터에 이미지 추가 기능 사용 여부, true 또는 false"),
+            @Parameter(name="attachFile", description = "파일 첨부 기능 사용 여부, true 또는 false"),
+            @Parameter(name="comment", description = "댓글 사용 여부, true 또는 false"),
+            @Parameter(name="afterWritingRedirect", description = "글작성 후 이동 방향, false : 게시글 목록, true: 게시글 상세, 기본값 false"),
+            @Parameter(name="showViewList", description = "글보기 하단에 목록 노출 여부, true 또는 false"),
+            @Parameter(name="listAuthority", description = "목록 권한, ALL - 전체, MEMBER - 회원, ADMIN - 관리자, 기본값 ALL"),
+            @Parameter(name="viewAuthority", description = "글보기 권한, ALL - 전체, MEMBER - 회원, ADMIN - 관리자, 기본값 ALL"),
+            @Parameter(name="writeAuthority", description = "글쓰기 권한, ALL - 전체, MEMBER - 회원, ADMIN - 관리자, 기본값 ALL"),
+            @Parameter(name="commentAuthority", description = "댓글 작성 권한, ALL - 전체, MEMBER - 회원, ADMIN - 관리자, 기본값 ALL"),
+    })
+    @RequestMapping(path="/update/config", method={RequestMethod.POST, RequestMethod.PATCH})
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> updateConfig(@Valid RequestBoardConfig form, Errors errors) {
+        String mode = request.getMethod().equalsIgnoreCase("PATCH") ? "update":"register";
+        form.setMode(mode);
+        
+        boardConfigValidator.validate(form, errors);
+
+        if (errors.hasErrors()) {
+           throw new BadRequestException(utils.getErrorMessages(errors));
+        }
+
+        configUpdateService.process(form);
+
+        return ResponseEntity.status(mode.equals("update") ? HttpStatus.OK : HttpStatus.CREATED).build();
+    }
+
 
     @Operation(summary = "게시글 한개 조회", method = "GET", description = "경로변수 형태로 게시글 조회, /api/v1/board/info/게시글번호 형식으로 조회 요청")
     @ApiResponse(responseCode = "200", description = "게시글 한개")
