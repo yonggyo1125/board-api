@@ -1,6 +1,7 @@
 package org.koreait.member.validators;
 
 import lombok.RequiredArgsConstructor;
+import org.koreait.member.controllers.RequestLoginToken;
 import org.koreait.member.controllers.RequestToken;
 import org.koreait.member.entities.Member;
 import org.koreait.member.repositories.MemberRepository;
@@ -27,7 +28,8 @@ public class TokenValidator implements Validator {
             return;
         }
 
-        RequestToken form = (RequestToken) target;
+
+        RequestLoginToken form = (RequestLoginToken) target;
         Member member = repository.findByEmail(form.getEmail()).orElse(null);
 
         if (member == null) {

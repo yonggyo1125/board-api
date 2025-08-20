@@ -59,7 +59,7 @@ public class MemberController {
     })
     @ApiResponse(responseCode = "200", description = "인증 성공시 토큰(JWT)발급")
     @PostMapping("/token")
-    public String token(@Valid @RequestBody RequestToken form, Errors errors) {
+    public String token(@Valid @RequestBody(required = false) RequestLoginToken form,  @Valid @RequestBody(required = false) RequestSocialToken socialForm, Errors errors) {
 
         tokenValidator.validate(form, errors);
 
@@ -67,7 +67,7 @@ public class MemberController {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
-        return form instanceof RequestSocialToken ? tokenService.create((RequestSocialToken)form) : tokenService.create(((RequestLoginToken)form).getEmail());
+        return form == null ? tokenService.create(socialForm) : tokenService.create(form.getEmail());
     }
 
 
