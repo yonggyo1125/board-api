@@ -41,6 +41,12 @@ public class FileInfoService {
         return item;
     }
 
+    public FileInfo get(String gid) {
+        List<FileInfo> items = getList(gid);
+
+        return items == null? null : items.getFirst();
+    }
+
     /**
      * 파일 목록 조회
      *

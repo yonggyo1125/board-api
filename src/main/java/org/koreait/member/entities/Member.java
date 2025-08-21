@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.koreait.file.entities.FileInfo;
 import org.koreait.global.entities.BaseEntity;
 import org.koreait.member.constants.Authority;
 import org.koreait.member.constants.SocialChannel;
@@ -23,6 +24,9 @@ public class Member extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
+    @Column(length=45)
+    private String gid;
 
     @Column(length=75, unique = true, nullable = false)
     private String email;
@@ -58,4 +62,7 @@ public class Member extends BaseEntity implements Serializable {
     public boolean isAdmin() {
         return authority != null && authority == Authority.ADMIN;
     }
+
+    @Transient
+    private FileInfo profileImage;
 }
