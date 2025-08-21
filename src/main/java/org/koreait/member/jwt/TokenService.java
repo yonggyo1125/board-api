@@ -10,7 +10,7 @@ import org.koreait.global.exceptions.UnAuthorizedException;
 import org.koreait.global.libs.Utils;
 import org.koreait.member.MemberInfo;
 import org.koreait.member.constants.Authority;
-import org.koreait.member.controllers.RequestSocialToken;
+import org.koreait.member.constants.SocialChannel;
 import org.koreait.member.entities.Member;
 import org.koreait.member.exceptions.MemberNotFoundException;
 import org.koreait.member.repositories.MemberRepository;
@@ -72,8 +72,14 @@ public class TokenService {
                 .compact();
     }
 
-    public String create(RequestSocialToken form) {
-        Member member = repository.findBySocialChannelAndSocialToken(form.getChannel(), form.getToken()).orElseThrow(MemberNotFoundException::new);
+    /**
+     * 소셜 로그인시 소셜 채널과 발급 받은 아이디(토큰)으로 회원이 있는지 체크
+     * @param channel
+     * @param token
+     * @return
+     */
+    public String create(SocialChannel channel, String token) {
+        Member member = repository.findBySocialChannelAndSocialToken(channel, token).orElseThrow(MemberNotFoundException::new);
 
         return create(member.getEmail());
     }

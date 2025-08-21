@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.koreait.global.exceptions.BadRequestException;
@@ -29,6 +30,7 @@ public class MemberController {
     private final JoinService joinService;
     private final TokenValidator tokenValidator;
     private final TokenService tokenService;
+    private final HttpServletRequest request;
     private final MemberUtil memberUtil;
     private final Utils utils;
 
@@ -54,12 +56,15 @@ public class MemberController {
      */
     @Operation(summary = "회원 인증 처리", description = "이메일과 비밀번호로 인증한 후 회원 전용 요청을 보낼수 있는 토큰(JWT)을 발급")
     @Parameters({
-            @Parameter(name="email", required = true, description = "이메일"),
-            @Parameter(name="password", required = true, description = "비밀번호")
+            @Parameter(name="email", required = true, description = "이메일, 일반 로그인 시 필수"),
+            @Parameter(name="password", required = true, description = "비밀번호, 일반 로그인시 필수"),
+            @Parameter(name="socialChannel", required = true, description = "소셜 로그인 채널 구분, 소셜 로그인 시 필수"),
+            @Parameter(name="socialToken", required = true, description = "소셜 로그인시 발급받은 회원 구분 값, 소셜 로그인시에만 필수")
     })
     @ApiResponse(responseCode = "200", description = "인증 성공시 토큰(JWT)발급")
-    @PostMapping("/token")
-    public String token(@Valid @RequestBody(required = false) RequestLoginToken form,  @Valid @RequestBody(required = false) RequestSocialToken socialForm, Errors errors) {
+    @PostMapping({"/token", "/social/token"})
+    public String token(@Valid @RequestBody RequestToken form, Errors errors) {
+        form.setSocial(request.getRequestURI().contains("/social"));
 
         tokenValidator.validate(form, errors);
 
@@ -67,7 +72,7 @@ public class MemberController {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
-        return form == null ? tokenService.create(socialForm) : tokenService.create(form.getEmail());
+        return form.isSocial() ? tokenService.create(form.getSocialChannel(), form.getSocialToken()) : tokenService.create(form.getEmail());
     }
 
 

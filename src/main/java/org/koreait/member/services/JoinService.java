@@ -32,6 +32,12 @@ public class JoinService {
         member.setCredentialChangedAt(LocalDateTime.now());
         member.setAuthority(Authority.MEMBER);
 
+        String mobile = form.getMobile();
+        if (StringUtils.hasText(mobile)) {
+            mobile = mobile.replaceAll("\\D", "");
+            member.setMobile(mobile);
+        }
+
         repository.saveAndFlush(member);
     }
 }

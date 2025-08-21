@@ -3,20 +3,19 @@ package org.koreait.member.controllers;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.koreait.member.constants.SocialChannel;
 
 @Data
 public class RequestJoin {
     @NotBlank @Email
     private String email;
 
-    @NotBlank
-    @Size(min=8)
     private String password;
-
-    @NotBlank
     private String confirmPassword;
+
+    private SocialChannel socialChannel;
+    private String socialToken;
 
     @NotBlank
     private String name;
