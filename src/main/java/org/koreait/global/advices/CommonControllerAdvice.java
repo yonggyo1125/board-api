@@ -41,6 +41,7 @@ public class CommonControllerAdvice {
 
         e.printStackTrace();
 
+
         return ResponseEntity.status(status).body(new JSONError(status, message));
     }
 }
