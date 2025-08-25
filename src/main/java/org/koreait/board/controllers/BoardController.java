@@ -110,7 +110,7 @@ public class BoardController {
     })
     @RequestMapping(path="/update/config", method={RequestMethod.POST, RequestMethod.PATCH})
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> updateConfig(@Valid RequestBoardConfig form, Errors errors) {
+    public ResponseEntity<Void> updateConfig(@Valid @RequestBody RequestBoardConfig form, Errors errors) {
         String mode = request.getMethod().equalsIgnoreCase("PATCH") ? "update":"register";
         form.setMode(mode);
         
