@@ -67,6 +67,8 @@ public class JoinValidator implements Validator, PasswordValidator, MobileValida
                 errors.rejectValue("password", "Complexity");
             }
 
+
+
             // 3. 비밀번호 확인 일치 여부
             if (!password.equals(confirmPassword)) {
                 errors.rejectValue("confirmPassword", "Mismatch");
