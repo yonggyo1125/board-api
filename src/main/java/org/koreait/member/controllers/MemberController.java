@@ -14,7 +14,9 @@ import org.koreait.member.entities.Member;
 import org.koreait.member.jwt.TokenService;
 import org.koreait.member.libs.MemberUtil;
 import org.koreait.member.services.JoinService;
+import org.koreait.member.services.ProfileUpdateService;
 import org.koreait.member.validators.JoinValidator;
+import org.koreait.member.validators.ProfileValidator;
 import org.koreait.member.validators.TokenValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,8 @@ public class MemberController {
     private final JoinService joinService;
     private final TokenValidator tokenValidator;
     private final TokenService tokenService;
+    private final ProfileValidator profileValidator;
+    private final ProfileUpdateService profileUpdateService;
     private final HttpServletRequest request;
     private final MemberUtil memberUtil;
     private final Utils utils;
@@ -95,11 +99,13 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     public Member update(@Valid @RequestBody RequestProfile form, Errors errors) {
 
+        profileValidator.validate(form, errors);
+
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
-        return null;
+        return profileUpdateService.process(form);
     }
 
     @PatchMapping("/update/{seq}")
