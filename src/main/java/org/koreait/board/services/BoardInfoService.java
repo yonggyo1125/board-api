@@ -51,7 +51,17 @@ public class BoardInfoService {
      * @return
      */
     public BoardData get(Long seq) {
-        BoardData item = boardDataRepository.findById(seq).orElseThrow(BoardDataNotFoundException::new);
+        QBoardData boardData = QBoardData.boardData;
+        BoardData item = queryFactory.selectFrom(boardData)
+                .leftJoin(boardData.board)
+                .fetchJoin()
+                .leftJoin(boardData.member)
+                .fetchJoin()
+                .where(boardData.seq.eq(seq))
+                .fetchOne();
+        if (item == null) {
+            throw new BoardDataNotFoundException();
+        }
 
         // 추가 정보 처리
         addInfo(item);
