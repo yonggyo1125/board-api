@@ -258,12 +258,18 @@ public class BoardController {
         return commentDeleteService.process(seq);
     }
 
+    @Operation(summary = "비회원 게시글또는 댓글의 수정, 삭제 가능 여부체크", description = "응답 코드 200 - 승인 완료, 401 - 비회원 비밀번호 확인이 필요")
+    @GetMapping("/guest/{mode}/{seq}")
+    public void guestPasswordCheck(@PathVariable("mode") String mode, @PathVariable("seq") Long seq) {
+        authService.check(mode, seq);
+    }
+
     @Operation(summary = "비회원 게시글 또는 댓글의 수정, 삭제 비밀번호 검증", method="POST")
     @ApiResponse(responseCode = "204")
     @Parameter(name="password", required = true, in = ParameterIn.QUERY, description = "비회원 비밀번호")
     @PostMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void guestPasswordCheck(@Valid @RequestBody RequestPassword form, Errors errors) {
+    public void guestPasswordCheckProcess(@Valid @RequestBody RequestPassword form, Errors errors) {
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
