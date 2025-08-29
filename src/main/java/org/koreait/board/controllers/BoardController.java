@@ -235,6 +235,13 @@ public class BoardController {
         String mode = request.getMethod().equalsIgnoreCase("PATCH") ? "comment_update" : "comment_write";
         form.setMode(mode);
 
+        if (mode.equals("comment_update")) {
+            Comment comment = commentInfoService.get(form.getSeq());
+            form.setGuest(comment.isGuest());
+        } else {
+            form.setGuest(!memberUtil.isLogin());
+        }
+
         HttpStatus status = mode.equals("comment_update") ? HttpStatus.OK : HttpStatus.CREATED;
 
         commentValidator.validate(form, errors);
