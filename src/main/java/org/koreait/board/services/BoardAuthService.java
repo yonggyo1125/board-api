@@ -82,7 +82,6 @@ public class BoardAuthService {
         if (item != null && (mode.equals("update") || mode.equals("delete"))) {
             if (item.isGuest()) { // 비회원 게시글
                 if (session.get("board_seq_" + seq) == null) { // 비회원 인증을 받지 않은 상태
-                    session.set("board_guest_seq", seq);
                     throw new GuestPasswordCheckException(); // 비밀번호 확인 페이지 출력
                 }
             } else { // 회원 게시글
@@ -98,7 +97,6 @@ public class BoardAuthService {
         if (comment != null && mode.startsWith("comment_")) {
             if (comment.isGuest()) { // 비회원 댓글
                 if (session.get("comment_seq_" + seq) == null) { // 비회원 인증을 받지 않은 상태
-                    session.set("comment_guest_seq", seq);
                     throw new GuestPasswordCheckException(); // 비밀번호 확인 페이지 출력
                 }
             } else { // 회원 댓글

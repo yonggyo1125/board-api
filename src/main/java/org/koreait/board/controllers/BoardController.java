@@ -267,14 +267,12 @@ public class BoardController {
     @Operation(summary = "비회원 게시글 또는 댓글의 수정, 삭제 비밀번호 검증", method="POST")
     @ApiResponse(responseCode = "204")
     @Parameter(name="password", required = true, in = ParameterIn.QUERY, description = "비회원 비밀번호")
-    @PostMapping("/password")
+    @PostMapping({"/password/{seq}", "/password/comment/{commentSeq}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void guestPasswordCheckProcess(@Valid @RequestBody RequestPassword form, Errors errors) {
+    public void guestPasswordCheckProcess(@PathVariable(required = false, name="seq")Long seq, @PathVariable(required = false, name="commentSeq") Long commentSeq, @Valid @RequestBody RequestPassword form, Errors errors) {
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
-        Long commentSeq = session.get("comment_guest_seq");
-        Long seq = session.get("board_guest_seq");
 
         String guestPw = null, confirmKey = null;
         if (commentSeq != null) { // 댓글
