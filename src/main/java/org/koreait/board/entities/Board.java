@@ -57,6 +57,9 @@ public class Board extends BaseEntity implements Serializable {
     private boolean listable; // 글목록 가능 여부
 
     @Transient
+    private boolean viewable; // 글보기 가능 여부
+
+    @Transient
     private boolean commentable; //댓글 작성 가능 여부
 
     public List<String> getCategories() {
