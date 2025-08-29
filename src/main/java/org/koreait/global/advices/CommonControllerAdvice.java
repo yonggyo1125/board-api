@@ -6,6 +6,10 @@ import org.koreait.global.libs.Utils;
 import org.koreait.global.rests.JSONError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,7 +41,20 @@ public class CommonControllerAdvice {
         } else if (e instanceof AuthorizationDeniedException) {
             status = HttpStatus.UNAUTHORIZED;
             message = utils.getMessage("UnAuthorized");
+        } else if (e instanceof DisabledException) { // 탈퇴한 회원인 경우
+            status = HttpStatus.UNAUTHORIZED;
+            message = utils.getMessage("Authentication.disabled");
+        } else if (e instanceof AccountExpiredException) { // 계정 만료 회원인 경우
+            status = HttpStatus.UNAUTHORIZED;
+            message = utils.getMessage("Authentication.account.expired");
+        } else if (e instanceof LockedException) { // 계정이 잠겨 있는 경우
+            status = HttpStatus.UNAUTHORIZED;
+            message = utils.getMessage("Authentication.account.locked");
+        } else if (e instanceof CredentialsExpiredException) { // 비밀번호가 만료된 경우
+            status = HttpStatus.UNAUTHORIZED;
+            message = utils.getMessage("Authentication.credential.expired");
         }
+
 
         e.printStackTrace();
 
