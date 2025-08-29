@@ -35,8 +35,15 @@ public class CommentInfoService {
      * @return
      */
     public Comment get(Long seq) {
-        Comment item = commentRepository.findById(seq).orElseThrow(CommentNotFoundException::new);
-
+        QComment comment = QComment.comment;
+        Comment item = queryFactory.selectFrom(comment)
+                .leftJoin(comment.member)
+                .fetchJoin()
+                .where(comment.seq.eq(seq))
+                .fetchOne();
+        if (item == null) {
+            throw new CommentNotFoundException();
+        }
         addInfo(item); // 추가 정보 처리
 
         return item;
@@ -102,5 +109,7 @@ public class CommentInfoService {
 
         item.setEditable(editable);
         item.setGuest(guest); // 비회원 댓글 여부
+
+        item.setBoardDataSeq(item.getItem().getSeq());
     }
 }

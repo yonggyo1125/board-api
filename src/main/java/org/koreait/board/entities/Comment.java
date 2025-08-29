@@ -49,4 +49,7 @@ public class Comment extends BaseEntity implements Serializable {
 
     @Transient
     private boolean guest; // 비회원 게시글 여부
+
+    @Transient
+    private Long boardDataSeq;
 }
